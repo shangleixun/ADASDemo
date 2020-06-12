@@ -27,6 +27,8 @@ typedef void(^IPVTotalStateChanged)(IPVState state);
 @property (nonatomic, copy) UIFrameChanged frameChangedBlock;
 @property (nonatomic, copy) IPVTotalStateChanged stateChangedBlock;
 
+- (void)updateModelByKey:(NSString *)key withValue:(NSString *)value;
+
 - (void)edgeShow;
 - (void)edgeHide;
 

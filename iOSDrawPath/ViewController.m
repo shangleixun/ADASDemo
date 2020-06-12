@@ -54,7 +54,7 @@
     CGFloat kScreenHeight = UIScreen.mainScreen.bounds.size.height;
     
     _input_size = CGSizeMake(kScreenWidth*3/5, kScreenHeight - 162);
-    _input_origin = CGPointMake(kScreenWidth/2.0-_input_size.width/2.0, 0);
+    _input_origin = CGPointMake(kScreenWidth/2.0 - _input_size.width/2.0, 0);
     _input_origin_hide = CGPointMake(kScreenWidth + 30.0, 0);
     
     _inputView = [[InputParametersView alloc] initWithFrame:CGRectMakeEx(_input_origin_hide, _input_size)];
@@ -111,7 +111,6 @@
         make.width.mas_equalTo(120);
         make.height.mas_equalTo(120);
     }];
-
     
     _touchPoint = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"corner"]];
     [_videoView addSubview:_touchPoint];
@@ -119,13 +118,13 @@
     
     [self viewDrawLine];
     
-    
     _showInfo = UILabel.new;
     _showInfo.backgroundColor = [UIColor colorWithRed:239/255.0 green:239/255.0 blue:239/255.0 alpha:1.0];
     _showInfo.frame = CGRectMake(100, 100, 150, 60);
     _showInfo.font = [UIFont systemFontOfSize:20.0 weight:UIFontWeightHeavy];
     
     _showInfo.layer.cornerRadius = 5.0;
+    _showInfo.layer.masksToBounds = YES;
     _showInfo.layer.borderWidth = 0;
     
     [_videoView addSubview:_showInfo];
@@ -133,6 +132,7 @@
     UIScreenEdgePanGestureRecognizer *edgePan = [[UIScreenEdgePanGestureRecognizer alloc] initWithTarget:self action:@selector(edgeShowInputView:)];
     edgePan.edges = UIRectEdgeRight;
     [self.view addGestureRecognizer:edgePan];
+    
     
 }
 
@@ -311,7 +311,9 @@
     _selected_screen_point = CGPointMake(targetScreenPointX, targetScreenPointY);
     _touchPoint.center = CGPointMake(targetScreenPointX, targetScreenPointY);
     
-    NSString *text =  [NSString stringWithFormat:@"{x:%.3f,y:%.3f}", x, y];
+    NSString *text = [NSString stringWithFormat:@"{x:%.1f, y:%.1f}", x, y];
+    
+    [_inputView updateModelByKey:@"vanp" withValue:text];
     
     CGRect txtRect = [text boundingRectWithSize:CGSizeMake(CGFLOAT_MAX, 60) options:NSStringDrawingUsesLineFragmentOrigin attributes:@{ NSFontAttributeName:[UIFont systemFontOfSize:20 weight:UIFontWeightHeavy] } context:NULL];
     

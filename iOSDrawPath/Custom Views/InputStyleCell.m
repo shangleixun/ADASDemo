@@ -16,8 +16,9 @@ NSNotificationName const UITextFieldsResignResponderNotification = @"UITextField
 
 @implementation InputStyleModel
 
-- (instancetype)initWithTitle:(NSString *)title {
+- (instancetype)initWithKey:(NSString *)key title:(NSString *)title {
     if (self = [super init]) {
+        _key = [key copy];
         _title = [title copy];
     }
     return self;

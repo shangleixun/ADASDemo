@@ -25,7 +25,7 @@ typedef void(^MoveToNextField)(id _Nullable view);
 @property (nonatomic, copy) NSString *title;
 @property (nonatomic, copy) NSString *value;
 
-- (instancetype)initWithTitle:(NSString *)title;
+- (instancetype)initWithKey:(NSString *)key title:(NSString *)title;
 
 @end
 

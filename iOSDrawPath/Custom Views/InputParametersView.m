@@ -50,17 +50,23 @@ static NSString *INPUT_CELL_ID = @"InputStyleCell";
         make.edges.equalTo(self);
     }];
     
-    InputStyleModel *model1 = [[InputStyleModel alloc] initWithTitle:NSLocalizedString(@"Vehicle width/cm", @"")];
-    InputStyleModel *model2 = [[InputStyleModel alloc] initWithTitle:NSLocalizedString(@"Distance between camera and the center of vehicle/cm", @"")];
-    InputStyleModel *model3 = [[InputStyleModel alloc] initWithTitle:NSLocalizedString(@"Distance between camera and the front bumper/cm", @"")];
-    InputStyleModel *model4 = [[InputStyleModel alloc] initWithTitle:NSLocalizedString(@"Distance between camera and the front tire/cm", @"")];
-    InputStyleModel *model5 = [[InputStyleModel alloc] initWithTitle:NSLocalizedString(@"Camera height (ground)/cm", @"")];
-    InputStyleModel *model6 = [[InputStyleModel alloc] initWithTitle:NSLocalizedString(@"Camera lens/mm", @"")];
-    InputStyleModel *model7 = [[InputStyleModel alloc] initWithTitle:NSLocalizedString(@"Camera sensor size/mm", @"")];
-    InputStyleModel *model8 = [[InputStyleModel alloc] initWithTitle:NSLocalizedString(@"Vanishing point/pixel point", @"")];
+    NSArray<NSString *> *keys = @[ @"vhwd", @"dccv", @"dcfb", @"dcft", @"camh", @"caml", @"cams", @"vanp" ];
+    NSArray<NSString *> *titles = @[ NSLocalizedString(@"Vehicle width/cm", @""),
+                                     NSLocalizedString(@"Distance between camera and the center of vehicle/cm", @""),
+                                     NSLocalizedString(@"Distance between camera and the front bumper/cm", @""),
+                                     NSLocalizedString(@"Distance between camera and the front tire/cm", @""),
+                                     NSLocalizedString(@"Camera height (ground)/cm", @""),
+                                     NSLocalizedString(@"Camera lens/mm", @""),
+                                     NSLocalizedString(@"Camera sensor size/mm", @""),
+                                     NSLocalizedString(@"Vanishing point/pixel point", @"") ];
     
-    _dataSource = @[ model1, model2, model3, model4, model5, model6, model7, model8 ];
+    NSMutableArray<InputStyleModel *> *models = [NSMutableArray arrayWithCapacity:20];
+    for (NSUInteger idx = 0; idx < keys.count; ++idx) {
+        InputStyleModel *model = [[InputStyleModel alloc] initWithKey:keys[idx] title:titles[idx]];
+        [models addObject:model];
+    }
     
+    _dataSource = [models copy];
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -131,6 +137,7 @@ static NSString *INPUT_CELL_ID = @"InputStyleCell";
 }
 
 - (void)edgeShow {
+    
     if (_isSelectedFieldVisible) {
         if ([self.selectedField canBecomeFirstResponder]) {
             [self.selectedField becomeFirstResponder];
@@ -141,6 +148,11 @@ static NSString *INPUT_CELL_ID = @"InputStyleCell";
             [firstCell.inputField becomeFirstResponder];
         }
     }
+    
+    [UIView performWithoutAnimation:^{
+        [_tableView reloadRowsAtIndexPaths:@[ [NSIndexPath indexPathForRow:_dataSource.count-1 inSection:0] ] withRowAnimation:UITableViewRowAnimationNone];
+    }];
+    
 }
 
 - (void)edgeHide {
@@ -149,6 +161,15 @@ static NSString *INPUT_CELL_ID = @"InputStyleCell";
     [[NSNotificationCenter defaultCenter] postNotificationName:UITextFieldsResignResponderNotification object:nil];
 }
 
+- (void)updateModelByKey:(NSString *)key withValue:(NSString *)value {
+    
+    [_dataSource enumerateObjectsUsingBlock:^(InputStyleModel * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        if ([obj.key isEqualToString:key]) {
+            obj.value = value;
+            *stop = YES;
+        }
+    }];
+}
 /*
  // Only override drawRect: if you perform custom drawing.
  // An empty implementation adversely affects performance during animation.
