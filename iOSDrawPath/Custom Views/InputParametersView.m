@@ -94,7 +94,7 @@ static NSString *INPUT_CELL_ID = @"InputStyleCell";
             if (justShow) {
                 [weakSelf showingCellFrameChangedWithIndexPath:backCell.indexPath];
             } else {
-                weakSelf.dataSource[backCell.indexPath.row].value = backCell.inputText;
+                weakSelf.dataSource[backCell.indexPath.row].value = [backCell.inputText copy];
                 [weakSelf checkCanSendState];
             }
         }

@@ -24,8 +24,7 @@ NSNotificationName const UITextFieldsResignResponderNotification = @"UITextField
 }
 
 - (NSString *)description {
-    
-    return [NSString stringWithFormat:@"%@:%p title:%@, value:%@", NSStringFromClass([self class]), &self, _title, _value];
+    return [NSString stringWithFormat:@"%@:%p key: %@, title:%@, value:%@", NSStringFromClass([self class]), &self, _key, _title, _value];
 }
 
 @end
@@ -82,8 +81,6 @@ NSNotificationName const UITextFieldsResignResponderNotification = @"UITextField
     [super awakeFromNib];
     // Initialization code
     
-   
-    
 }
 
 - (BOOL)textFieldShouldBeginEditing:(UITextField *)textField {
@@ -102,7 +99,7 @@ NSNotificationName const UITextFieldsResignResponderNotification = @"UITextField
 }
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField {
-    
+    // 做切换到下一个的操作
     
     return YES;
 }
@@ -126,8 +123,8 @@ NSNotificationName const UITextFieldsResignResponderNotification = @"UITextField
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated {
     [super setSelected:selected animated:animated];
-
     // Configure the view for the selected state
+    
 }
 
 - (void)resignResponder {

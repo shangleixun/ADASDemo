@@ -31,14 +31,10 @@
 @property (nonatomic, strong) UIImageView *videoView;
 @property (nonatomic, strong) UIImageView *touchPoint;
 @property (nonatomic, strong) SteeringWheel *wheel;
-
 @property (nonatomic, strong) UILabel *showInfo;
-
 @property (nonatomic, strong) InputParametersView *inputView;
 
 @property (nonatomic, assign) BOOL inputViewShowing;
-
-@property (nonatomic, assign) CGRect inputViewFrame;
 
 @end
 
@@ -137,9 +133,6 @@
     UIScreenEdgePanGestureRecognizer *edgePan = [[UIScreenEdgePanGestureRecognizer alloc] initWithTarget:self action:@selector(edgeShowInputView:)];
     edgePan.edges = UIRectEdgeRight;
     [self.view addGestureRecognizer:edgePan];
-    
-    
-    
     
 }
 
@@ -392,7 +385,6 @@
     lineLayer2.lineWidth = 1.0;
     lineLayer2.strokeColor = [UIColor orangeColor].CGColor;
     lineLayer2.path = linePath2.CGPath;
-    // lineLayer2.lineDashPattern = @[ @(5), @(2) ];
     lineLayer2.fillColor = nil;
     [_videoView.layer addSublayer:lineLayer2];
     

@@ -21,6 +21,7 @@ typedef void(^MoveToNextField)(id _Nullable view);
 
 @interface InputStyleModel : NSObject
 
+@property (nonatomic, copy) NSString *key;
 @property (nonatomic, copy) NSString *title;
 @property (nonatomic, copy) NSString *value;
 
