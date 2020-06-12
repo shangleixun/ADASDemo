@@ -73,7 +73,7 @@ static NSString *INPUT_CELL_ID = @"InputStyleCell";
                                      NSLocalizedString(@"Vanishing point", @"") ];
     
     NSArray<NSNumber *> *canInputs = @[ @(YES), @(YES), @(YES), @(YES), @(YES), @(YES), @(YES), @(YES) ];
-    NSArray<NSString *> *units = @[ @"㎝", @"㎝", @"㎝", @"㎝", @"㎝", @"㎜", @"㎛", @"x,y" ];
+    NSArray<NSString *> *units = @[ @"|㎝", @"|㎝", @"|㎝", @"|㎝", @"|㎝", @"|㎜", @"|㎛", @"|x,y" ];
     
     NSMutableArray<InputStyleModel *> *models = [NSMutableArray arrayWithCapacity:20];
     for (NSUInteger idx = 0; idx < keys.count; ++idx) {
@@ -176,7 +176,8 @@ static NSString *INPUT_CELL_ID = @"InputStyleCell";
     [UIView performWithoutAnimation:^{
         [_tableView reloadRowsAtIndexPaths:@[ [NSIndexPath indexPathForRow:_dataSource.count-1 inSection:0] ] withRowAnimation:UITableViewRowAnimationNone];
     }];
-    
+    // If the reload action has filled all textfields, change send button's state
+    [self checkCanSendState];
 }
 
 - (void)edgeHide {

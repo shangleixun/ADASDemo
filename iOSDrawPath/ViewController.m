@@ -36,6 +36,8 @@
 
 @property (nonatomic, assign) BOOL inputViewShowing;
 
+@property (nonatomic, strong) UIButton *showInputViewBtn;
+
 @end
 
 @implementation ViewController
@@ -46,6 +48,36 @@
     [self addVideoViewAndWheelControl];
     [self addInputView];
     [self addViewControllerObservers:YES];
+    [self addShowBtn];
+}
+
+- (void)addShowBtn {
+    
+    _showInputViewBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    UIImageSymbolConfiguration *imageConfig = [UIImageSymbolConfiguration configurationWithFont:[UIFont systemFontOfSize:50 weight:UIFontWeightLight]];
+    UIImage *btnImage = [UIImage systemImageNamed:@"arrowtriangle.left.circle.fill" withConfiguration:imageConfig];
+    
+    [_showInputViewBtn setImage:btnImage forState:UIControlStateNormal];
+    
+    [self.view addSubview:_showInputViewBtn];
+
+    [_showInputViewBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.right.equalTo(self.view.mas_right);
+        make.centerY.equalTo(self.view.mas_centerY);
+        make.width.mas_equalTo(100);
+        make.height.mas_equalTo(100);
+    }];
+
+    [_showInputViewBtn addTarget:self action:@selector(showInputView:) forControlEvents:UIControlEventTouchUpInside];
+}
+
+- (void)showInputView:(UIButton *)sender {
+    
+    if (_inputViewShowing) {
+        [self animateInInputView];
+        return;
+    }
+    [self animateOutInputView];
 }
 
 - (void)addInputView {
@@ -112,7 +144,7 @@
         make.height.mas_equalTo(120);
     }];
     
-    _touchPoint = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"corner"]];
+    _touchPoint = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"cross_black"]];
     [_videoView addSubview:_touchPoint];
     _selected_pixel_point = CGPointZero;
     
@@ -141,24 +173,53 @@
     switch (ges.state) {
         case UIGestureRecognizerStateBegan:
         {
-            if (_inputViewShowing) {
-                return;
-            }
-            
-            __weak typeof(self) weakSelf = self;
-            CGRect targetRect = CGRectMakeEx(_input_origin, _input_size);
-            [UIView animateWithDuration:0.3 animations:^{
-                weakSelf.inputView.frame = targetRect;
-            } completion:^(BOOL finished) {
-                weakSelf.inputViewShowing = YES;
-                [weakSelf.inputView edgeShow];
-            }];
+            [self animateOutInputView];
         }
             break;
             
         default:
             break;
     }
+}
+
+- (void)animateOutInputView {
+    
+    if (_inputViewShowing) {
+        return;
+    }
+    
+    __weak typeof(self) weakSelf = self;
+    CGRect targetRect = CGRectMakeEx(_input_origin, _input_size);
+    [UIView animateWithDuration:0.3 animations:^{
+        weakSelf.inputView.frame = targetRect;
+        
+        UIImageSymbolConfiguration *imageConfig = [UIImageSymbolConfiguration configurationWithFont:[UIFont systemFontOfSize:50 weight:UIFontWeightLight]];
+        UIImage *btnImage = [UIImage systemImageNamed:@"arrowtriangle.right.circle.fill" withConfiguration:imageConfig];
+        [weakSelf.showInputViewBtn setImage:btnImage forState:UIControlStateNormal];
+        
+    } completion:^(BOOL finished) {
+        weakSelf.inputViewShowing = YES;
+        [weakSelf.inputView edgeShow];
+    }];
+}
+
+- (void)animateInInputView {
+    
+    CGRect targetRect = CGRectMakeEx(_input_origin_hide, _input_size);
+    __weak typeof(self) weakSelf = self;
+    
+    [UIView animateWithDuration:0.3 animations:^{
+        weakSelf.inputView.frame = targetRect;
+        [weakSelf.inputView edgeHide];
+        
+        UIImageSymbolConfiguration *imageConfig = [UIImageSymbolConfiguration configurationWithFont:[UIFont systemFontOfSize:50 weight:UIFontWeightLight]];
+        UIImage *btnImage = [UIImage systemImageNamed:@"arrowtriangle.left.circle.fill" withConfiguration:imageConfig];
+        [weakSelf.showInputViewBtn setImage:btnImage forState:UIControlStateNormal];
+        
+    } completion:^(BOOL finished) {
+        weakSelf.inputViewShowing = NO;
+    }];
+    
 }
 
 // MARK:- Make move by touching video view
@@ -170,15 +231,8 @@
     if ([_videoView.layer containsPoint:point]) {
         
         if (_inputViewShowing) {
-            CGRect targetRect = CGRectMakeEx(_input_origin_hide, _input_size);
-            __weak typeof(self) weakSelf = self;
             
-            [UIView animateWithDuration:0.3 animations:^{
-                weakSelf.inputView.frame = targetRect;
-                [weakSelf.inputView edgeHide];
-            } completion:^(BOOL finished) {
-                weakSelf.inputViewShowing = NO;
-            }];
+            [self animateInInputView];
             
             return;
         }
