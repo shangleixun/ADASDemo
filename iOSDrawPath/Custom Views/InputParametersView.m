@@ -8,6 +8,7 @@
 
 #import "InputParametersView.h"
 #import "Masonry.h"
+#import "NSArray+MEME.h"
 
 // MARK:- InputParametersView
 
@@ -15,6 +16,7 @@ static NSString *INPUT_CELL_ID = @"InputStyleCell";
 
 @interface InputParametersView ()<UITableViewDataSource, UITableViewDelegate>
 
+@property (nonatomic, strong) NSArray<InputStyleModel *> *dataSource;
 @property (nonatomic, strong) UITableView *tableView;
 @property (nonatomic, strong) UITextField *selectedField;
 @property (nonatomic, strong) NSIndexPath *selectedIndexPath;
@@ -48,8 +50,7 @@ static NSString *INPUT_CELL_ID = @"InputStyleCell";
     
     _sendButton = [UIButton buttonWithType:UIButtonTypeCustom];
     _sendButton.frame = CGRectMake(0, 0, 10 /* table view will expand width to fit */, 60);
-    
-    _sendButton.titleLabel.font = [UIFont systemFontOfSize:40.0 weight:UIFontWeightHeavy];
+    _sendButton.titleLabel.font = [UIFont fontWithName:@"ArialRoundedMTBold" size:40];
     [_sendButton setTitle:NSLocalizedString(@"Send", @"") forState:UIControlStateNormal];
     [_sendButton setTitleColor:UIColor.grayColor forState:UIControlStateNormal];
     
@@ -118,8 +119,6 @@ static NSString *INPUT_CELL_ID = @"InputStyleCell";
             if (justShow) {
                 [weakSelf showingCellFrameChangedWithIndexPath:backCell.indexPath];
             } else {
-                NSLog(@"new value %@", backCell.inputText);
-                
                 weakSelf.dataSource[backCell.indexPath.row].value = [backCell.inputText copy];
                 [weakSelf checkCanSendState];
             }
@@ -143,17 +142,12 @@ static NSString *INPUT_CELL_ID = @"InputStyleCell";
     if (self.stateChangedBlock) {
         if (valuedCount == 0) {
             self.stateChangedBlock(IPVStateAllEmpty);
-            
             [_sendButton setTitleColor:UIColor.grayColor forState:UIControlStateNormal];
-
         } else if (valuedCount < _dataSource.count) {
             self.stateChangedBlock(IPVStateHalfFilled);
-            
             [_sendButton setTitleColor:UIColor.grayColor forState:UIControlStateNormal];
-
         } else {
             self.stateChangedBlock(IPVStateCanSend);
-            
             [_sendButton setTitleColor:UIColor.greenColor forState:UIControlStateNormal];
         }
     }
@@ -173,7 +167,7 @@ static NSString *INPUT_CELL_ID = @"InputStyleCell";
             [self.selectedField becomeFirstResponder];
         }
     } else {
-        InputStyleCell *firstCell = [_tableView visibleCells].firstObject;
+        InputStyleCell *firstCell = [_tableView visibleCells].secondObject;
         if (firstCell != nil && [firstCell.inputField canBecomeFirstResponder]) {
             [firstCell.inputField becomeFirstResponder];
         }

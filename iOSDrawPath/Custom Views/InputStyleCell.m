@@ -39,7 +39,6 @@ NSNotificationName const UITextFieldsResignResponderNotification = @"UITextField
 
 - (instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier {
     if (self = [super initWithStyle:style reuseIdentifier:reuseIdentifier]) {
-        
         [self addCustomViews];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(resignResponder) name:UITextFieldsResignResponderNotification object:nil];
     }
@@ -48,13 +47,13 @@ NSNotificationName const UITextFieldsResignResponderNotification = @"UITextField
 
 - (void)addCustomViews {
     _inputTitle = UILabel.new;
-    _inputTitle.font = [UIFont systemFontOfSize:13.0 weight:UIFontWeightLight];
+    _inputTitle.font = [UIFont fontWithName:@"ArialRoundedMTBold" size:13];
     _inputTitle.numberOfLines = 0;
     _inputTitle.layer.cornerRadius = 6.0;
     
     _inputField = [[UITextField alloc] init];
     _inputField.borderStyle = UITextBorderStyleRoundedRect;
-    _inputField.font = [UIFont systemFontOfSize:16.0 weight:UIFontWeightBold];
+    _inputField.font = [UIFont fontWithName:@"ArialRoundedMTBold" size:16];
     _inputField.keyboardType = UIKeyboardTypeDecimalPad;
     _inputField.delegate = self;
     

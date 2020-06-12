@@ -18,9 +18,9 @@
 @interface ViewController () {
     
     CGSize _v_size;
+    CGSize _input_size;
     CGPoint _input_origin;
     CGPoint _input_origin_hide;
-    CGSize _input_size;
     
     CGPoint _selected_screen_point;
     CGPoint _selected_pixel_point;

@@ -32,17 +32,15 @@ typedef void(^MoveToNextField)(id _Nullable view);
 
 @end
 
-
 @interface InputStyleCell : UITableViewCell
 
-@property (nonatomic, strong) UITextField *inputField;
 @property (nonatomic, strong) UILabel *inputTitle;
-
-@property (nonatomic, copy) UIInputViewInputHandler inputHandler;
 @property (nonatomic, copy) NSString *inputText;
-@property (nonatomic, strong) NSIndexPath *indexPath;
+@property (nonatomic, strong) UITextField *inputField;
 
+@property (nonatomic, strong) NSIndexPath *indexPath;
 @property (nonatomic, strong) InputStyleModel *model;
+@property (nonatomic, copy) UIInputViewInputHandler inputHandler;
 
 @end
 

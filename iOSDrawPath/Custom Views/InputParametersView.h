@@ -23,7 +23,6 @@ typedef void(^IPVTotalStateChanged)(IPVState state);
 
 @interface InputParametersView : UIView
 
-@property (nonatomic, strong) NSArray<InputStyleModel *> *dataSource;
 @property (nonatomic, copy) UIFrameChanged frameChangedBlock;
 @property (nonatomic, copy) IPVTotalStateChanged stateChangedBlock;
 

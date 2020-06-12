@@ -46,7 +46,7 @@
     CGFloat width = CGRectGetWidth(self.frame);
     CGFloat height = CGRectGetHeight(self.frame);
     
-    NSArray<NSString *> *normalImageNames = @[ @"arrow_up", @"arrow_left", @"arrow_right", @"arrow_down" ];
+    NSArray<NSString *> *normalImageNames = @[ @"arrow_up_c", @"arrow_left_c", @"arrow_right_c", @"arrow_down_c" ];
     NSArray<NSString *> *highlightedImageNames = @[ @"arrow_up_selected", @"arrow_left_selected", @"arrow_right_selected", @"arrow_down_selected" ];
     
     SEL sel = @selector(touchButtonEvent:);
