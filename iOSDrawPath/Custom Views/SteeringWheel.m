@@ -195,7 +195,6 @@
 }
 
 - (void)dealloc {
-    
     if (_long_press_timer != NULL) {
         dispatch_source_cancel(_long_press_timer);
         _long_press_timer = NULL;

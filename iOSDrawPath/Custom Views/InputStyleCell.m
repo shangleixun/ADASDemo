@@ -9,7 +9,6 @@
 #import "InputStyleCell.h"
 #import "Masonry.h"
 
-
 NSNotificationName const UITextFieldsResignResponderNotification = @"UITextFieldsResignResponserNotification";
 
 // MARK:- InputStyleModel
