@@ -21,9 +21,12 @@ typedef void(^MoveToNextField)(id _Nullable view);
 
 @interface InputStyleModel : NSObject
 
+/// Key is unique.
 @property (nonatomic, copy) NSString *key;
 @property (nonatomic, copy) NSString *title;
 @property (nonatomic, copy) NSString *value;
+@property (nonatomic, copy) NSString *unit;
+@property (nonatomic, assign) BOOL canInput;
 
 - (instancetype)initWithKey:(NSString *)key title:(NSString *)title;
 

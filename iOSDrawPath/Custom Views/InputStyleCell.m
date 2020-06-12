@@ -58,6 +58,15 @@ NSNotificationName const UITextFieldsResignResponderNotification = @"UITextField
     _inputField.keyboardType = UIKeyboardTypeDecimalPad;
     _inputField.delegate = self;
     
+    UILabel *rightView = UILabel.new;
+    rightView.frame = CGRectMake(0, 0, 10, 40);
+    rightView.font = [UIFont fontWithName:@"ArialRoundedMTBold" size:17];
+    
+    _inputField.rightView = rightView;
+    _inputField.rightViewMode = UITextFieldViewModeAlways;
+    
+    [_inputField addTarget:self action:@selector(textFieldTextDidChange:) forControlEvents:UIControlEventEditingChanged];
+    
     [self.contentView addSubview:_inputTitle];
     [self.contentView addSubview:_inputField];
     
@@ -91,12 +100,11 @@ NSNotificationName const UITextFieldsResignResponderNotification = @"UITextField
     return YES;
 }
 
-- (BOOL)textFieldShouldEndEditing:(UITextField *)textField {
-    _inputText = textField.text;
+- (void)textFieldTextDidChange:(UITextField *)sender {
+    _inputText = sender.text;
     if (self.inputHandler) {
         self.inputHandler(self, NO);
     }
-    return YES;
 }
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField {
@@ -120,6 +128,11 @@ NSNotificationName const UITextFieldsResignResponderNotification = @"UITextField
     } else {
         _inputField.text = @"";
     }
+    
+    _inputField.userInteractionEnabled = model.canInput;
+    
+    UILabel *rightView = (UILabel *)_inputField.rightView;
+    rightView.text = _model.unit;
 }
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated {

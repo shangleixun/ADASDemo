@@ -18,8 +18,9 @@ static NSString *INPUT_CELL_ID = @"InputStyleCell";
 @property (nonatomic, strong) UITableView *tableView;
 @property (nonatomic, strong) UITextField *selectedField;
 @property (nonatomic, strong) NSIndexPath *selectedIndexPath;
-
 @property (nonatomic, assign) BOOL isSelectedFieldVisible;
+
+@property (nonatomic, strong) UIButton *sendButton;
 
 @end
 
@@ -44,6 +45,16 @@ static NSString *INPUT_CELL_ID = @"InputStyleCell";
     _tableView.backgroundColor = UIColor.orangeColor;
     [_tableView registerClass:[InputStyleCell class] forCellReuseIdentifier:INPUT_CELL_ID];
     
+    
+    _sendButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    _sendButton.frame = CGRectMake(0, 0, 10 /* table view will expand width to fit */, 60);
+    
+    _sendButton.titleLabel.font = [UIFont systemFontOfSize:40.0 weight:UIFontWeightHeavy];
+    [_sendButton setTitle:NSLocalizedString(@"Send", @"") forState:UIControlStateNormal];
+    [_sendButton setTitleColor:UIColor.grayColor forState:UIControlStateNormal];
+    
+    _tableView.tableFooterView = _sendButton;
+    
     [self addSubview:_tableView];
     
     [_tableView mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -51,23 +62,30 @@ static NSString *INPUT_CELL_ID = @"InputStyleCell";
     }];
     
     NSArray<NSString *> *keys = @[ @"vhwd", @"dccv", @"dcfb", @"dcft", @"camh", @"caml", @"cams", @"vanp" ];
-    NSArray<NSString *> *titles = @[ NSLocalizedString(@"Vehicle width/cm", @""),
-                                     NSLocalizedString(@"Distance between camera and the center of vehicle/cm", @""),
-                                     NSLocalizedString(@"Distance between camera and the front bumper/cm", @""),
-                                     NSLocalizedString(@"Distance between camera and the front tire/cm", @""),
-                                     NSLocalizedString(@"Camera height (ground)/cm", @""),
-                                     NSLocalizedString(@"Camera lens/mm", @""),
-                                     NSLocalizedString(@"Camera sensor size/mm", @""),
-                                     NSLocalizedString(@"Vanishing point/pixel point", @"") ];
+    NSArray<NSString *> *titles = @[ NSLocalizedString(@"Vehicle width", @""),
+                                     NSLocalizedString(@"Distance between camera and the center of vehicle", @""),
+                                     NSLocalizedString(@"Distance between camera and the front bumper", @""),
+                                     NSLocalizedString(@"Distance between camera and the front tire", @""),
+                                     NSLocalizedString(@"Camera height (ground)", @""),
+                                     NSLocalizedString(@"Camera lens", @""),
+                                     NSLocalizedString(@"Camera sensor size", @""),
+                                     NSLocalizedString(@"Vanishing point", @"") ];
+    
+    NSArray<NSNumber *> *canInputs = @[ @(YES), @(YES), @(YES), @(YES), @(YES), @(YES), @(YES), @(YES) ];
+    NSArray<NSString *> *units = @[ @"㎝", @"㎝", @"㎝", @"㎝", @"㎝", @"㎜", @"㎛", @"x,y" ];
     
     NSMutableArray<InputStyleModel *> *models = [NSMutableArray arrayWithCapacity:20];
     for (NSUInteger idx = 0; idx < keys.count; ++idx) {
         InputStyleModel *model = [[InputStyleModel alloc] initWithKey:keys[idx] title:titles[idx]];
+        model.unit = units[idx];
+        model.canInput = canInputs[idx].boolValue;
         [models addObject:model];
     }
     
     _dataSource = [models copy];
 }
+
+// MARK:- Table view data source and delegate
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
     return 60;
@@ -100,6 +118,8 @@ static NSString *INPUT_CELL_ID = @"InputStyleCell";
             if (justShow) {
                 [weakSelf showingCellFrameChangedWithIndexPath:backCell.indexPath];
             } else {
+                NSLog(@"new value %@", backCell.inputText);
+                
                 weakSelf.dataSource[backCell.indexPath.row].value = [backCell.inputText copy];
                 [weakSelf checkCanSendState];
             }
@@ -108,6 +128,8 @@ static NSString *INPUT_CELL_ID = @"InputStyleCell";
     
     return cell;
 }
+
+// MARK:- Useful methods
 
 - (void)checkCanSendState {
     
@@ -121,10 +143,18 @@ static NSString *INPUT_CELL_ID = @"InputStyleCell";
     if (self.stateChangedBlock) {
         if (valuedCount == 0) {
             self.stateChangedBlock(IPVStateAllEmpty);
+            
+            [_sendButton setTitleColor:UIColor.grayColor forState:UIControlStateNormal];
+
         } else if (valuedCount < _dataSource.count) {
             self.stateChangedBlock(IPVStateHalfFilled);
+            
+            [_sendButton setTitleColor:UIColor.grayColor forState:UIControlStateNormal];
+
         } else {
             self.stateChangedBlock(IPVStateCanSend);
+            
+            [_sendButton setTitleColor:UIColor.greenColor forState:UIControlStateNormal];
         }
     }
 }

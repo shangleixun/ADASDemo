@@ -53,7 +53,7 @@
     CGFloat kScreenWidth = UIScreen.mainScreen.bounds.size.width;
     CGFloat kScreenHeight = UIScreen.mainScreen.bounds.size.height;
     
-    _input_size = CGSizeMake(kScreenWidth*3/5, kScreenHeight - 162);
+    _input_size = CGSizeMake(kScreenWidth*3.2/5.0, kScreenHeight - 162);
     _input_origin = CGPointMake(kScreenWidth/2.0 - _input_size.width/2.0, 0);
     _input_origin_hide = CGPointMake(kScreenWidth + 30.0, 0);
     
