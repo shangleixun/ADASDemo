@@ -47,11 +47,8 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
-    
-    
     [self addVideoViewAndWheelControl];
     [self addInputView];
-    
     [self addViewControllerObservers:YES];
 }
 
@@ -82,12 +79,7 @@
     
     CGFloat kScreenWidth = UIScreen.mainScreen.bounds.size.width;
     CGFloat kScreenHeight = UIScreen.mainScreen.bounds.size.height;
-    
-    CGFloat ratio = 720.0 / 1280.0;
-    CGFloat width = kScreenWidth - 16.0 * 2.0;
-    CGFloat height = width * ratio;
-    
-    _v_size = CGSizeMake(width, height);
+    _v_size = CGSizeMake(kScreenWidth, kScreenHeight);
     
     _videoView = [[UIImageView alloc] init];
     _videoView.userInteractionEnabled = YES;
@@ -103,13 +95,14 @@
     [self drawDottedLine];
     
     _wheel = [[SteeringWheel alloc] initWithFrame:CGRectMake(0, 0, 120, 120)];
+    _wheel.backgroundColor = [UIColor colorWithRed:239/255.0 green:239/255.0 blue:239/255.0 alpha:1.0];
+    _wheel.layer.cornerRadius = 60.0f;
     
     __weak typeof(self) weakSelf = self;
     _wheel.btnTouchEvent = ^(id  _Nullable sender) {
         UIView *senderView = (UIView *)sender;
         if (senderView != nil) {
             NSLog(@"点击了 或者长按了 %@", @(senderView.tag));
-            
             [weakSelf moveTargetViewWithDirection:(SteeringWheelButtonDirection)senderView.tag];
         }
     };
@@ -117,22 +110,18 @@
     [_videoView addSubview:_wheel];
     
     [_wheel mas_makeConstraints:^(MASConstraintMaker *make) {
-        
         make.right.equalTo(_videoView.mas_right);
         make.bottom.equalTo(_videoView.mas_bottom);
         make.width.mas_equalTo(120);
         make.height.mas_equalTo(120);
-        
     }];
-    
-    _wheel.backgroundColor = [UIColor colorWithRed:239/255.0 green:239/255.0 blue:239/255.0 alpha:1.0];
-    _wheel.layer.cornerRadius = 60.0f;
+
     
     _touchPoint = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"corner"]];
     [_videoView addSubview:_touchPoint];
     _selected_pixel_point = CGPointZero;
     
-    [self viewDrawLine:_videoView];
+    [self viewDrawLine];
     
     
     _showInfo = UILabel.new;
@@ -158,30 +147,25 @@
     
     switch (ges.state) {
         case UIGestureRecognizerStateBegan:
-            {
-                if (_inputViewShowing) {
-                    return;
-                }
-                
-                __weak typeof(self) weakSelf = self;
-                CGRect targetRect = CGRectMakeEx(_input_origin, _input_size);
-                [UIView animateWithDuration:0.3 animations:^{
-                    weakSelf.inputView.frame = targetRect;
-                } completion:^(BOOL finished) {
-                    weakSelf.inputViewShowing = YES;
-                    weakSelf.inputViewFrame = weakSelf.inputView.frame;
-                    
-                    [weakSelf.inputView edgeShow];
-
-                }];
-                
+        {
+            if (_inputViewShowing) {
+                return;
             }
+            
+            __weak typeof(self) weakSelf = self;
+            CGRect targetRect = CGRectMakeEx(_input_origin, _input_size);
+            [UIView animateWithDuration:0.3 animations:^{
+                weakSelf.inputView.frame = targetRect;
+            } completion:^(BOOL finished) {
+                weakSelf.inputViewShowing = YES;
+                [weakSelf.inputView edgeShow];
+            }];
+        }
             break;
             
         default:
             break;
     }
-    
 }
 
 // MARK:- Make move by touching video view
@@ -193,20 +177,18 @@
     if ([_videoView.layer containsPoint:point]) {
         
         if (_inputViewShowing) {
-            __weak typeof(self) weakSelf = self;
             CGRect targetRect = CGRectMakeEx(_input_origin_hide, _input_size);
+            __weak typeof(self) weakSelf = self;
             
             [UIView animateWithDuration:0.3 animations:^{
                 weakSelf.inputView.frame = targetRect;
                 [weakSelf.inputView edgeHide];
-
             } completion:^(BOOL finished) {
                 weakSelf.inputViewShowing = NO;
             }];
             
             return;
         }
-        
         
         CGPoint wheelPoint = [_wheel.layer convertPoint:point fromLayer:_videoView.layer];
         if ([_wheel.layer containsPoint:wheelPoint]) {
@@ -353,31 +335,31 @@
 
 - (void)drawDottedLine {
     CAShapeLayer *dotteShapeLayer = [CAShapeLayer layer];
-    CGMutablePathRef dotteShapePath =  CGPathCreateMutable();
-    //设置虚线颜色为blackColor
-    [dotteShapeLayer setStrokeColor:[[UIColor orangeColor] CGColor]];
-    //设置虚线宽度
+    CGMutablePathRef dotteShapePath = CGPathCreateMutable();
+    // 设置虚线颜色为 blackColor
+    [dotteShapeLayer setStrokeColor:UIColor.orangeColor.CGColor];
+    // 设置虚线宽度
     dotteShapeLayer.lineWidth = 2.0f ;
-    //10=线的宽度 5=每条线的间距
-    NSArray *dotteShapeArr = [[NSArray alloc] initWithObjects:[NSNumber numberWithInt:10],[NSNumber numberWithInt:5], nil];
+    // 10=线的宽度 5=每条线的间距
+    NSArray<NSNumber *> *dotteShapeArr = @[ @(10), @(5) ];
     [dotteShapeLayer setLineDashPattern:dotteShapeArr];
-    CGPathMoveToPoint(dotteShapePath, NULL, 50 ,50);
+    CGPathMoveToPoint(dotteShapePath, NULL, 50, 50);
     CGPathAddLineToPoint(dotteShapePath, NULL, 100, 100);
     [dotteShapeLayer setPath:dotteShapePath];
     CGPathRelease(dotteShapePath);
-    //把绘制好的虚线添加上来
+    // 把绘制好的虚线添加上来
     [self.videoView.layer addSublayer:dotteShapeLayer];
 }
 
-- (void)viewDrawLine:(__kindof UIView *)view {
+- (void)viewDrawLine {
     
     CGFloat h1_ratio = 300.0 / 720.0;
     CGFloat h2_ratio = 420.0 / 720.0;
-    CGFloat hcenter_ratio = 360.0 / 720.0;
-    CGFloat vcenter_ratio = 640.0 / 1280.0;
+    CGFloat hcenter_ratio = 0.5;
+    CGFloat vcenter_ratio = 0.5;
     
-    CGFloat width = CGRectGetWidth(view.frame);
-    CGFloat height = CGRectGetHeight(view.frame);
+    CGFloat width = _v_size.width;
+    CGFloat height = _v_size.height;
     
     CGPoint h1_start = CGPointMake(0, height * h1_ratio);
     CGPoint h1_end = CGPointMake(width, height * h1_ratio);
@@ -399,7 +381,7 @@
     lineLayer.strokeColor = [UIColor orangeColor].CGColor;
     lineLayer.path = linePath.CGPath;
     lineLayer.fillColor = nil;
-    [view.layer addSublayer:lineLayer];
+    [_videoView.layer addSublayer:lineLayer];
     
     // 线的路径
     UIBezierPath *linePath2 = [UIBezierPath bezierPath];
@@ -412,7 +394,7 @@
     lineLayer2.path = linePath2.CGPath;
     // lineLayer2.lineDashPattern = @[ @(5), @(2) ];
     lineLayer2.fillColor = nil;
-    [view.layer addSublayer:lineLayer2];
+    [_videoView.layer addSublayer:lineLayer2];
     
     // 线的路径
     UIBezierPath *linePath3 = [UIBezierPath bezierPath];
@@ -425,7 +407,7 @@
     lineLayer3.path = linePath3.CGPath;
     lineLayer3.lineDashPattern = @[ @(5), @(2) ];
     lineLayer3.fillColor = nil;
-    [view.layer addSublayer:lineLayer3];
+    [_videoView.layer addSublayer:lineLayer3];
     
     // 线的路径
     UIBezierPath *linePath4 = [UIBezierPath bezierPath];
@@ -438,7 +420,7 @@
     lineLayer4.path = linePath4.CGPath;
     lineLayer4.lineDashPattern = @[ @(5), @(2) ];
     lineLayer4.fillColor = nil;
-    [view.layer addSublayer:lineLayer4];
+    [_videoView.layer addSublayer:lineLayer4];
     
     
 }
@@ -451,7 +433,6 @@
         CGRect keyboardEndFrame = [userInfo[UIKeyboardFrameEndUserInfoKey] CGRectValue];
         _keyboardAnimDuration = [userInfo[UIKeyboardAnimationDurationUserInfoKey] doubleValue];
         
-        CGFloat kScreenWidth = UIScreen.mainScreen.bounds.size.width;
         CGFloat kScreenHeight = UIScreen.mainScreen.bounds.size.height;
         
         CGFloat keyboardH = CGRectGetHeight(keyboardEndFrame);
