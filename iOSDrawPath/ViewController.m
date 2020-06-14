@@ -54,6 +54,7 @@
 - (void)addShowBtn {
     
     _showInputViewBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    // _showInputViewBtn.backgroundColor = UIColor.orangeColor;
     UIImageSymbolConfiguration *imageConfig = [UIImageSymbolConfiguration configurationWithFont:[UIFont systemFontOfSize:50 weight:UIFontWeightLight]];
     UIImage *btnImage = [UIImage systemImageNamed:@"arrowtriangle.left.circle.fill" withConfiguration:imageConfig];
     
@@ -192,6 +193,7 @@
     CGRect targetRect = CGRectMakeEx(_input_origin, _input_size);
     [UIView animateWithDuration:0.3 animations:^{
         weakSelf.inputView.frame = targetRect;
+        [weakSelf.inputView edgeShow];
         
         UIImageSymbolConfiguration *imageConfig = [UIImageSymbolConfiguration configurationWithFont:[UIFont systemFontOfSize:50 weight:UIFontWeightLight]];
         UIImage *btnImage = [UIImage systemImageNamed:@"arrowtriangle.right.circle.fill" withConfiguration:imageConfig];
@@ -199,7 +201,6 @@
         
     } completion:^(BOOL finished) {
         weakSelf.inputViewShowing = YES;
-        [weakSelf.inputView edgeShow];
     }];
 }
 
@@ -231,9 +232,7 @@
     if ([_videoView.layer containsPoint:point]) {
         
         if (_inputViewShowing) {
-            
             [self animateInInputView];
-            
             return;
         }
         
